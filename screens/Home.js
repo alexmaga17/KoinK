@@ -1,28 +1,28 @@
 import React, { useState } from 'react';
 import { ImageBackground, Template, Text, ScrollView, View, StyleSheet, Image, Pressable, Button, TouchableNativeFeedback, TextInput } from 'react-native';
-
+import { SvgUri } from 'react-native-svg';
 
 
 
 const Home = ({ navigation }) => {
     return (
         <View style={styles.container}>
-            <ImageBackground style={styles.background} source={require('../assets/background.png')} />
-            <Image style={styles.logo} source={require('../assets/logo.png')} />
-            <Image style={styles.leitao} source={require('../assets/KoinkLogin.png')} />
+            <ImageBackground style={styles.background} source={require('../assets/loginBack.png')} />
+            <SvgUri style={styles.logo} uri="https://sonaligl.sirv.com/Images/logo.svg" />
+            <SvgUri style={styles.leitao} uri="https://sonaligl.sirv.com/Images/KoinkLogin1.svg" />
             <Pressable style={styles.buttonGoogle}>
-                <Text style={styles.buttonGoogle.text}><Image source={require('../assets/google.png')} />Continuar com o Google</Text>
+                <Text style={styles.buttonGoogle.text}><SvgUri uri="https://sonaligl.sirv.com/Images/google.svg" />Continuar com o Google</Text>
             </Pressable>
             <Pressable style={styles.buttonFacebook}>
-                <Text style={styles.buttonFacebook.text}><Image source={require('../assets/facebook.png')} />Continuar com o Facebook</Text>
+                <Text style={styles.buttonFacebook.text}><SvgUri uri="https://sonaligl.sirv.com/Images/facebook.svg" />Continuar com o Facebook</Text>
             </Pressable>
             <Pressable style={styles.buttonApple}>
-                <Text style={styles.buttonApple.text}><Image source={require('../assets/apple.png')} />Continuar com o Apple ID</Text>
+                <Text style={styles.buttonApple.text}><SvgUri uri="https://sonaligl.sirv.com/Images/apple.svg" />Continuar com o Apple ID</Text>
             </Pressable>
             <Pressable  onPress={() => navigation.navigate('Login')} style={styles.buttonEntrar}>
                 <Text style={styles.buttonEntrar.text}>Entrar</Text>
             </Pressable>
-            <Pressable style={styles.buttonRegistar}>
+            <Pressable onPress={() => navigation.navigate('Register')} style={styles.buttonRegistar}>
                 <Text style={styles.buttonRegistar.text}>Criar Conta</Text>
             </Pressable>
         </View>

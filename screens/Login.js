@@ -11,7 +11,7 @@ const Login = ({ navigation }) => {
     return (
         <View style={styles.container}>
             <ImageBackground style={styles.background} source={require('../assets/loginBack.png')} />
-            <Image style={styles.logo} source={require('../assets/logo.png')} />
+            <SvgUri style={styles.logo} uri="https://sonaligl.sirv.com/Images/logo.svg" />
             <SvgUri style={styles.leitao} uri="https://sonaligl.sirv.com/Images/KoinkLogin1.svg" />
             <TextInput 
                     style={styles.nameInput}
@@ -27,7 +27,7 @@ const Login = ({ navigation }) => {
                     placeholder='Password'
                     placeholderTextColor="black"
             />
-            <Pressable  onPress={() => navigation.navigate('Login')} style={styles.buttonEntrar}>
+            <Pressable  onPress={() => navigation.navigate('Main')} style={styles.buttonEntrar}>
                 <Text style={styles.buttonEntrar.text}>Entrar</Text>
             </Pressable>
             <Pressable onPress={() => navigation.navigate('Register')} style={styles.buttonRegistar}>
