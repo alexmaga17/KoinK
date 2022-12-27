@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { ImageBackground, Template, Text, ScrollView, View, StyleSheet, Image, Pressable, Button, TouchableNativeFeedback, TextInput } from 'react-native';
-
+import { ImageBackground, Text, ScrollView, View, StyleSheet, Image, Pressable, Button, TouchableNativeFeedback, TextInput } from 'react-native';
+import { SvgUri } from 'react-native-svg';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 
@@ -10,10 +11,10 @@ const Register = ({ navigation }) => {
     const [password, setPassword] = useState('');
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <ImageBackground style={styles.background} source={require('../assets/loginBack.png')} />
-            <Image style={styles.logo} source={require('../assets/logo.png')} />
-            <Image style={styles.leitao} source={require('../assets/KoinkLogin.png')} />
+            <SvgUri style={styles.logo} uri="https://sonaligl.sirv.com/Images/logo.svg" />
+            <SvgUri style={styles.leitao} uri="https://sonaligl.sirv.com/Images/KoinkLogin1.svg" />
             <TextInput 
                     style={styles.nameInput}
                     onChangeText={setUsername}
@@ -42,11 +43,14 @@ const Register = ({ navigation }) => {
             <Pressable onPress={() => navigation.navigate('Login')} style={styles.buttonLogin}>
                 <Text style={styles.buttonLogin.text}>Login</Text>
             </Pressable>
-        </View>
+        </SafeAreaView>
     );
 };
 
 const styles = StyleSheet.create({
+    container:{
+        flex:1
+    },
     background:{
         width:'100%',
         height:'100%',
@@ -54,45 +58,42 @@ const styles = StyleSheet.create({
     },
     logo:{
         position: 'absolute',
-        left: '24.1%',
-        right: '23.88%',
-        top: '7.23%',
-        bottom: '87.44%'
+        alignSelf:'center',
+        width:202.85,
+        height:45,
+        marginTop:61
     },
     leitao:{
         position: 'absolute',
+        alignSelf:'center',
         width: 136,
         height: 204.78,
-        left: 127,
-        top: 132,
+        marginTop:132
     },
     nameInput:{
         position: 'absolute',
+        alignSelf:'center',
         width:284,
         height:52,
-        left:55,
-        top:363,
-        bottom:'45.02%',
+        marginTop:363,
         backgroundColor:'#FFFFFF',
         borderRadius:10
     },
     emailInput:{
         position: 'absolute',
+        alignSelf:'center',
         width:284,
         height:52,
-        left:55,
-        top:422,
-        bottom:'45.02%',
+        marginTop:422,
         backgroundColor:'#FFFFFF',
         borderRadius:10
     },
     passInput:{
         position: 'absolute',
+        alignSelf:'center',
         width:284,
         height:52,
-        left:55,
-        top:482,
-        bottom:'45.02%',
+        marginTop:482,
         backgroundColor:'#FFFFFF',
         borderRadius:10
     },

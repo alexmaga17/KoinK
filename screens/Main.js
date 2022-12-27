@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ImageBackground, Template, Text, ScrollView, View, StyleSheet, Image, Pressable, Button, TouchableNativeFeedback, TextInput } from 'react-native';
+import { ImageBackground, Text, ScrollView, SafeAreaView, View, StyleSheet, Image, Pressable, Button, TouchableNativeFeedback, TextInput } from 'react-native';
 import { SvgUri } from 'react-native-svg';
 import { ProgressBar } from 'react-native-paper';
 
@@ -7,30 +7,62 @@ import { ProgressBar } from 'react-native-paper';
 
 const Main = ({ navigation }) => {
     return (
-        <View>
+        <SafeAreaView style={styles.container}>
             <ImageBackground style={styles.background} source={{ uri:'https://sonaligl.sirv.com/Images/backMain.png' }}/>
-            <ProgressBar style={styles.bar} progress={0.8} color='#FF6600' />
-            <SvgUri style={styles.koink} uri="https://sonaligl.sirv.com/Images/koinkAcenar.svg" />
-            <Pressable>
-                <SvgUri style={styles.minijogos} uri="https://sonaligl.sirv.com/Images/minijogos.svg" />
-            </Pressable>
-        </View>
+            <View>
+                <ProgressBar style={styles.bar} progress={0.5} color='#FF6600' />
+                <View style={styles.level}>
+                    <Text style={styles.level.text}>10</Text>
+                </View>
+                {/* <View style={styles.coins}>
+                    <Text style={styles.coins.text}>10</Text>
+                </View> */}
+                <SvgUri style={styles.koink} uri="https://sonaligl.sirv.com/Images/koinkAcenar.svg" />
+                <Pressable>
+                    <SvgUri style={styles.minijogos} uri="https://sonaligl.sirv.com/Images/minijogos.svg" />
+                </Pressable>
+            </View>    
+        </SafeAreaView>
     );
 };
 
 const styles = StyleSheet.create({
+    container:{
+        flex:1
+    },
     background:{
+        position: 'absolute',
         width:'100%',
         height:'100%',
         resizeMode:'contain'
+    },
+    level:{
+        justifyContent: 'center',
+        position: 'absolute',
+        width:55,
+        height:55,
+        borderRadius:55/2,
+        borderWidth:2,
+        borderColor: '#FFFFFF',
+        marginLeft:31,
+        marginTop:39.74,
+        backgroundColor:'#FF6600',
+        text:{
+            alignSelf:'center',
+            fontFamily:'Mulish',
+            fontWeight:'bold',
+            fontSize:20,
+            color:'#FFFFFF',
+        }
     },
     bar:{
         position:'absolute',
         width:308,
         height:30,
-        top:11,
-        left:21,
-        border:'2px solid #FFFFFF',
+        marginTop:51,
+        alignSelf:'center',
+        borderWidth:2,
+        borderColor: '#FFFFFF',
         borderRadius:20,
         backgroundColor:'#FFFFFF'
     },
@@ -45,10 +77,8 @@ const styles = StyleSheet.create({
         position: 'absolute',
         width:57,
         height:57,
-        left: '3.33%',
-        right: '82.05%',
-        top: '90.68%',
-        bottom: '2.51%',
+        marginTop:750,
+        marginLeft:13
     }
 });
 

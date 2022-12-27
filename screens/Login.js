@@ -1,15 +1,34 @@
 import React, { useState } from 'react';
-import { ImageBackground, Template, Text, ScrollView, View, StyleSheet, Image, Pressable, Button, TouchableNativeFeedback, TextInput } from 'react-native';
+import { ImageBackground, Text, ScrollView, View, StyleSheet, Image, Pressable, Button, TouchableNativeFeedback, TextInput } from 'react-native';
 import { SvgUri } from 'react-native-svg';
-
-
+import { SafeAreaView } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 const Login = ({ navigation }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
+    const handleSubmit = () => {
+        axios.post('http://10.0.2.2:3000/users/login', {
+            username,
+            password
+          })
+          .then(response => {
+            if (response.data.accessToken) {
+                AsyncStorage.setItem('@token', response.data.accessToken)// Store the token in AsyncStorage or in a global state management library
+                console.log('success')
+            } else {
+              console.log('Error');
+            }
+          })
+          .catch(error => {
+            console.error(error);
+          });
+      };
+
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <ImageBackground style={styles.background} source={require('../assets/loginBack.png')} />
             <SvgUri style={styles.logo} uri="https://sonaligl.sirv.com/Images/logo.svg" />
             <SvgUri style={styles.leitao} uri="https://sonaligl.sirv.com/Images/KoinkLogin1.svg" />
@@ -27,13 +46,13 @@ const Login = ({ navigation }) => {
                     placeholder='Password'
                     placeholderTextColor="black"
             />
-            <Pressable  onPress={() => navigation.navigate('Main')} style={styles.buttonEntrar}>
+            <Pressable  onPress={() => handleSubmit() } style={styles.buttonEntrar}>
                 <Text style={styles.buttonEntrar.text}>Entrar</Text>
             </Pressable>
             <Pressable onPress={() => navigation.navigate('Register')} style={styles.buttonRegistar}>
                 <Text style={styles.buttonRegistar.text}>Criar Conta</Text>
             </Pressable>
-        </View>
+        </SafeAreaView>
     );
 };
 
@@ -45,25 +64,24 @@ const styles = StyleSheet.create({
     },
     logo:{
         position: 'absolute',
-        left: '24.1%',
-        right: '23.88%',
-        top: '7.23%',
-        bottom: '87.44%'
+        alignSelf:'center',
+        width:202.85,
+        height:45,
+        marginTop:61
     },
     leitao:{
         position: 'absolute',
         width: 136,
         height: 204.78,
-        left: 127,
-        top: 132,
+        marginTop:132,
+        alignSelf:'center',
     },
     nameInput:{
         position: 'absolute',
         width:284,
         height:52,
-        left:55,
-        top:412,
-        bottom:'45.02%',
+        marginTop:412,
+        alignSelf:'center',
         backgroundColor:'#FFFFFF',
         borderRadius:10
     },
@@ -71,9 +89,8 @@ const styles = StyleSheet.create({
         position: 'absolute',
         width:284,
         height:52,
-        left:55,
-        top:474,
-        bottom:'45.02%',
+        marginTop:474,
+        alignSelf:'center',
         backgroundColor:'#FFFFFF',
         borderRadius:10
     },
@@ -83,7 +100,7 @@ const styles = StyleSheet.create({
         alignSelf:'center',
         width: 284,
         height: 52,
-        top: 655,
+        marginTop:655,
         backgroundColor: '#FF1D25',
         borderRadius: 10,
         text:{
@@ -99,7 +116,7 @@ const styles = StyleSheet.create({
         alignSelf:'center',
         width: 284,
         height: 52,
-        top: 728,
+        marginTop: 728,
         backgroundColor: '#EBEBEB',
         borderRadius: 10,
         text:{
