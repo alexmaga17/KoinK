@@ -21,6 +21,18 @@ const Main = ({ navigation }) => {
                 <Pressable>
                     <SvgUri style={styles.minijogos} uri="https://sonaligl.sirv.com/Images/minijogos.svg" />
                 </Pressable>
+                <Pressable>
+                    <SvgUri style={styles.missoes} uri="..." />
+                </Pressable>
+                <Pressable>
+                    <SvgUri style={styles.jogoPrincipal} uri="..." />
+                </Pressable>
+                <Pressable>
+                    <SvgUri style={styles.loja} uri="..." />
+                </Pressable>
+                <Pressable>
+                    <SvgUri style={styles.perfil} uri="..." />
+                </Pressable>
             </View>    
         </SafeAreaView>
     );
@@ -79,6 +91,34 @@ const styles = StyleSheet.create({
         height:57,
         marginTop:750,
         marginLeft:13
+    },
+    missoes:{
+        position: 'absolute',
+        width:57,
+        height:57,
+        marginTop:750,
+        marginLeft:73
+    },
+    jogoPrincipal:{
+        position: 'absolute',
+        width:70,
+        height:70,
+        marginTop:750,
+        marginLeft:146
+    },
+    loja:{
+        position: 'absolute',
+        width:57,
+        height:57,
+        marginTop:750,
+        marginLeft:235
+    },
+    perfil:{
+        position: 'absolute',
+        width:57,
+        height:57,
+        marginTop:750,
+        marginLeft:308
     }
 });
 
