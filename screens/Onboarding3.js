@@ -10,14 +10,11 @@ const Onboarding1 = ({ navigation }) => {
         <SafeAreaView style={styles.container}>
             <ImageBackground resizeMode="cover" style={styles.background} source={{ uri: 'https://sonaligl.sirv.com/Images/BackgroundOnb.png' }} />
             <View style={styles.card}>
-                <SvgUri style={styles.card.image} uri="https://sonaligl.sirv.com/Images/koinkPhone.svg" />
-                <Text style={styles.card.title}>Joga!</Text>
-                <Text style={styles.card.desc}>Tens diversos jogos e minijogos onde ganhas moedas que podem ser usadas na loja ou dentro do jogo principal.</Text>
-                <Pressable onPress={() => navigation.navigate('Onboarding2')} style={styles.card.next}>
-                    <Text style={styles.card.next.text}>Próximo</Text>
-                </Pressable>
-                <Pressable onPress={() => navigation.navigate('Main')} style={styles.card.skip}>
-                    <Text style={styles.card.skip.text}>Pular</Text>
+                <SvgUri style={styles.card.image} uri="https://sonaligl.sirv.com/Images/koink_pc.svg" />
+                <Text style={styles.card.title}>Personaliza!</Text>
+                <Text style={styles.card.desc}>Vem conhecer a nossa coleção de avatares. Podes personalizar o teu perfil e torná-lo único, à tua maneira. Estás pronto para conhecer o KoinK?</Text>
+                <Pressable onPress={() => navigation.navigate('Main')} style={styles.card.next}>
+                    <Text style={styles.card.next.text}>Vamos Começar!</Text>
                 </Pressable>
             </View>
         </SafeAreaView>
