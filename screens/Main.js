@@ -30,10 +30,10 @@ const Main = ({ navigation }) => {
                 <Pressable  style={styles.tabbar.principal}>
                     <SvgUri uri="https://sonaligl.sirv.com/Images/Tabbar/pp.svg" />
                 </Pressable> 
-                <Pressable  style={styles.tabbar.loja}>
+                <Pressable onPress={() => navigation.navigate('Store')}  style={styles.tabbar.loja}>
                     <SvgUri uri="https://sonaligl.sirv.com/Images/Tabbar/Loja.svg" />
                 </Pressable> 
-                <Pressable  style={styles.tabbar.perfil}>
+                <Pressable onPress={() => navigation.navigate('Perfil')}  style={styles.tabbar.perfil}>
                     <SvgUri uri="https://sonaligl.sirv.com/Images/Tabbar/Perfil.svg" />
                 </Pressable>  
             </View>      
