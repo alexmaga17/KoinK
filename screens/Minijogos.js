@@ -3,6 +3,7 @@ import { ImageBackground, Text, ScrollView, View, StyleSheet, Image, Pressable, 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SvgUri } from 'react-native-svg';
 import Swiper from 'react-native-swiper';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 
 
@@ -12,7 +13,8 @@ const Onboarding1 = ({ navigation }) => {
             <ImageBackground resizeMode="cover" style={styles.background} source={{ uri: 'https://sonaligl.sirv.com/Images/BackgroundOnb.png' }} />
             <View style={styles.topContainer}>
                 <View style={styles.topContainer.back}>
-                    <SvgUri uri="https://sonaligl.sirv.com/Images/backArrow.svg" />
+                    {/* <SvgUri uri="https://sonaligl.sirv.com/Images/backArrow.svg" /> */}
+                    <Icon name="chevron-back" size={30} color="#fff" style={styles.icon}></Icon>
                 </View>
                 <View style={styles.topContainer.coins}>
                     <Text style={styles.topContainer.coins.text}>14.000</Text>
@@ -61,17 +63,17 @@ const styles = StyleSheet.create({
     topContainer:{
         flex:0.12,
         flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'space-between',
+        marginTop: 20,
+        marginLeft: 30,
+        marginRight: 30,
         back:{
-            justifyContent:'center',
-            alignSelf:'flex-start',
+            //justifyContent:'center',
         },
         coins:{
             flexDirection:'row',
             justifyContent: 'center',
             alignItems: 'center',
-            alignSelf:'flex-end',
             marginTop:10,
             marginRight:15,
             width:120,

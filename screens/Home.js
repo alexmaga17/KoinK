@@ -8,8 +8,8 @@ import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 const Home = ({ navigation }) => {
     return (
         <SafeAreaView style={styles.container}>
-            {/* <SvgUri style={styles.background} uri="https://sonaligl.sirv.com/Images/Group%2047.svg" /> */}
             <ImageBackground  resizeMode="cover" style={styles.background} source={require('../assets/loginBack.png')} />
+            {/* <ImageBackground  resizeMode="cover" style={styles.background} source={require('../assets/loginBack.png')} /> */}
             <View style={styles.logos}>
                 <SvgUri uri="https://sonaligl.sirv.com/Images/logo.svg" />
                 <SvgUri style={styles.logos.leitao} uri="https://sonaligl.sirv.com/Images/KoinkLogin1.svg" />
@@ -45,9 +45,10 @@ const styles = StyleSheet.create({
     },
     background:{
         position:'absolute',
+        width:'100%',
+        height:'100%',
         top:0,
         left:0,
-        resizeMode:'cover',
     },
     logos:{
         alignItems:'center',
