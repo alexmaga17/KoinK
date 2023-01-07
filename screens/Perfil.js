@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ImageBackground, Text, ScrollView, View, StyleSheet, Image, Pressable, Button, TouchableNativeFeedback, TextInput, Dimensions } from 'react-native';
+import { ImageBackground, Text, ScrollView, Modal, Switch, View, StyleSheet, Image, Pressable, Button, TouchableNativeFeedback, TextInput, Dimensions } from 'react-native';
 import { SvgUri } from 'react-native-svg';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -9,6 +9,8 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import IconEntypo from 'react-native-vector-icons/Entypo';
 import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
 import Swiper from 'react-native-swiper';
+import { BlurView } from 'expo-blur';
+import { color } from '@rneui/base';
 // import AppIntroSlider from 'react-native-app-intro-slider';
 const ListTab = [
     {
@@ -26,14 +28,18 @@ const InventarioTab = [
     },
     {
         slider: 'Boosters',
-        id:1
+        id: 1
     }
 ]
 const Perfil = ({ navigation }) => {
     const [status, setStatus] = useState('Inventário')
     const [slider, setSlider] = useState('Avatares')
     const [sliderId, setSliderId] = useState(0)
-    const [showHome, setShowHome] = useState(false)
+    const [modalVisible, setModalVisible] = useState(false);
+
+    const [isEnabled, setIsEnabled] = useState(false);
+    const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+
     const setStatusFilter = status => {
         setStatus(status)
     }
@@ -41,8 +47,8 @@ const Perfil = ({ navigation }) => {
     const setSliderFilter = slider => {
         setSlider(slider)
     }
-    
-    function swipeIndex(id){
+
+    function swipeIndex(id) {
         setSliderId(id)
     }
     return (
@@ -52,9 +58,9 @@ const Perfil = ({ navigation }) => {
                 style={styles.linearGradient}
             ></LinearGradient>
             <View style={styles.navbar}>
-                <Icon name="chevron-back" size={30} color="#fff" style={styles.icon}></Icon>
+                <Icon name="chevron-back" size={30} color="#fff" style={styles.icon} onPress={() => navigation.navigate('Main')}></Icon>
                 <Text style={styles.navbarText}>Perfil</Text>
-                <IconEntypo name="dots-three-vertical" size={25} color="#fff" style={styles.icon}></IconEntypo>
+                <IconEntypo name="dots-three-vertical" size={25} color="#fff" style={styles.icon} onPress={() => setModalVisible(true)}></IconEntypo>
             </View>
             <View style={styles.contentContainer}>
                 <View style={styles.opacityContainer}>
@@ -71,15 +77,16 @@ const Perfil = ({ navigation }) => {
                         <Text style={styles.numero}>16</Text>
                     </View>
                     <View style={styles.border}></View>
-                    <View style={styles.moedasData}>
-                        <Text style={styles.nivel}>Moedas</Text>
-                        <Text style={styles.numero}>14.000</Text>
-                    </View>
-                    <View style={styles.border}></View>
                     <View style={styles.classData}>
                         <Text style={styles.nivel}>Classificação</Text>
                         <Text style={styles.numero}>28</Text>
                     </View>
+                    <View style={styles.border}></View>
+                    <View style={styles.moedasData}>
+                        <Text style={styles.nivel}>Moedas</Text>
+                        <Text style={styles.numero}>14.000</Text>
+                    </View>
+                    
                 </View>
                 <View style={styles.tabs}>
                     {ListTab.map((tab, index) => (
@@ -93,20 +100,20 @@ const Perfil = ({ navigation }) => {
                         <View style={styles.containerInv}>
                             <View style={[styles.sliderName]}>
                                 {InventarioTab.map((inv, index) => (
-                                    <Text key={index} style={[styles.sliderTxt, index===0 && styles.sliderTxtBorder ,index === sliderId && styles.sliderActive]} >{inv.slider}</Text>
+                                    <Text key={index} style={[styles.sliderTxt, index === 0 && styles.sliderTxtBorder, index === sliderId && styles.sliderActive]} >{inv.slider}</Text>
                                 ))}
                             </View>
 
                             <Swiper
-                            index={0}
-                            loop={false}
-                            dot ={
-                                <View style={{backgroundColor:'#666666', width: 8, height: 8,borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3,}} />
-                            }
-                            activeDot ={
-                                <View style={{backgroundColor: '#666666', width: 14, height: 14, borderRadius: 100, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3,}} />
-                            }
-                            onIndexChanged ={(idx) => swipeIndex(idx)}
+                                index={0}
+                                loop={false}
+                                dot={
+                                    <View style={{ backgroundColor: '#666666', width: 8, height: 8, borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3, }} />
+                                }
+                                activeDot={
+                                    <View style={{ backgroundColor: '#666666', width: 14, height: 14, borderRadius: 100, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3, }} />
+                                }
+                                onIndexChanged={(idx) => swipeIndex(idx)}
                             >
                                 <ScrollView style={styles.containerAvatares}>
                                     <View style={styles.avatares}>
@@ -206,7 +213,38 @@ const Perfil = ({ navigation }) => {
                 </View>
             </View>
 
+            <Modal
+                animationType="slide"
+                visible={modalVisible}
+                transparent={true}
+                onRequestClose={() => {
+                    Alert.alert("Modal has been closed.");
+                    setModalVisible(!modalVisible);
+                }}
+            >
+                <BlurView intensity={100} tint='dark' style={styles.containerModal}>
+                    <View style={styles.modal}>
+                        <Text style={styles.modalTitulo}>Definições</Text>
+                        <View style={styles.som}>
+                            <Text style={styles.somTxt}>Som</Text>
+                            <Switch
+                                trackColor={{ false: "#A6A6A6", true: "#FF6600" }}
+                                thumbColor={isEnabled ? "#FFFFFF" : "#FFFFFF"}
+                                onValueChange={toggleSwitch}
+                                value={isEnabled}
+                                style={{ transform: [{ scaleX: 1.8 }, { scaleY: 1.8 }], paddingHorizontal:9}}
+                            />
+                        </View>
+                        <Pressable style={styles.botaoLogout} onPress={() => setModalVisible(false)}>
+                            <Text style={[styles.botaoCancelarTxt, {color:'#ffffff'}]}>Logout</Text>
+                        </Pressable>
+                        <Pressable style={styles.botaoCancelar} onPress={() => setModalVisible(false)}>
+                            <Text style={styles.botaoCancelarTxt}>Voltar</Text>
+                        </Pressable>
 
+                    </View>
+                </BlurView>
+            </Modal>
 
         </SafeAreaView>
     );
@@ -273,7 +311,7 @@ const styles = StyleSheet.create({
     },
     dadosUser: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'space-around',
         marginTop: 25,
     },
     nivelData: {
@@ -289,7 +327,7 @@ const styles = StyleSheet.create({
     classData: {
         flexDirection: 'column',
         alignItems: 'center',
-        marginRight: 15
+        // marginRight: 15
     },
     nivel: {
         color: 'white',
@@ -355,13 +393,13 @@ const styles = StyleSheet.create({
         color: '#A6A6A6'
     },
 
-    
-    sliderActive:{
-        color:"#6B6BA3"
+
+    sliderActive: {
+        color: "#6B6BA3"
     },
-    sliderTxtBorder:{
-        borderRightWidth:1,
-        borderColor:"#6B6BA3",
+    sliderTxtBorder: {
+        borderRightWidth: 1,
+        borderColor: "#6B6BA3",
     },
 
     containerAvatares: {
@@ -384,7 +422,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
 
-    containerBoosters:{
+    containerBoosters: {
         marginVertical: 15
     },
 
@@ -432,6 +470,67 @@ const styles = StyleSheet.create({
 
         color: '#FFFFFF',
     },
+
+
+    containerModal: {
+        width: '100%',
+        height: '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
+        blurRadius: 1
+    },
+    modal: {
+        backgroundColor: '#F6F4F2',
+        borderRadius: 30,
+        width: '80%',
+        height: '37%',
+        alignItems: 'center',
+    },
+
+    modalTitulo: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: '#353535',
+        marginTop:8
+    },
+
+    som:{
+        width: '100%',
+        flexDirection:'row',
+        justifyContent:'center',
+        alignItems:'center',
+        marginTop:40,
+        marginBottom:25
+    },
+
+    somTxt:{
+        fontSize: 18,
+        fontWeight:'semibold',
+        color:'#353535'
+    },
+    botaoLogout:{
+        backgroundColor: '#FF6600',
+        borderRadius: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '60%',
+        paddingVertical: 12,
+        marginTop: 10
+    },
+    botaoCancelar: {
+        backgroundColor: '#E3E3E3',
+        borderRadius: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '60%',
+        paddingVertical: 12,
+        marginTop: 10
+    },
+    botaoCancelarTxt: {
+        color: '#353535',
+        fontSize: 18
+    },
+    
 
 
 });

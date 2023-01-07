@@ -19,7 +19,7 @@ const ListTab = [
     }
 ]
 
-export default function Store() {
+export default function Store({navigation}) {
     const [tipo, setTipo] = useState('Avatares')
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -34,7 +34,7 @@ export default function Store() {
                 style={styles.linearGradient}
             ></LinearGradient>
             <View style={styles.navbar}>
-                <Icon name="chevron-back" size={30} color="#fff" style={styles.icon}></Icon>
+                <Icon name="chevron-back" size={30} color="#fff" style={styles.icon} onPress={() => navigation.navigate('Main')}></Icon>
                 <View style={styles.containerMoedas}>
                     <Text style={styles.numMoedas}>14.000</Text>
                     <SvgUri style={{ marginRight: 10 }} width='21' height='21' uri="https://rapedolo.sirv.com/koink/coin.svg" />
