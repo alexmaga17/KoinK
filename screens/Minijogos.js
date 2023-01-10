@@ -1,50 +1,71 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ImageBackground, Text, ScrollView, View, StyleSheet, Image, Pressable, Button, TouchableNativeFeedback, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SvgUri } from 'react-native-svg';
 import Swiper from 'react-native-swiper';
 import Icon from 'react-native-vector-icons/Ionicons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
 const Onboarding1 = ({ navigation }) => {
+
+    const [loggedUser, setloggedUser] = useState(null);
+
+    async function getLoggedUser(){
+        const data = await AsyncStorage.getItem('loggedUser');
+        if(data !== null){
+            setloggedUser(JSON.parse(data));
+            console.log(loggedUser);
+        }
+    }
+
+    useEffect(() => {
+        getLoggedUser();
+    }, []);
+
+
     return (
         <SafeAreaView style={styles.container}>
-            <ImageBackground resizeMode="cover" style={styles.background} source={{ uri: 'https://sonaligl.sirv.com/Images/BackgroundOnb.png' }} />
-            <View style={styles.topContainer}>
-                <View style={styles.topContainer.back}>
-                    {/* <SvgUri uri="https://sonaligl.sirv.com/Images/backArrow.svg" /> */}
-                    <Icon name="chevron-back" size={30} color="#fff" style={styles.icon}></Icon>
-                </View>
-                <View style={styles.topContainer.coins}>
-                    <Text style={styles.topContainer.coins.text}>14.000</Text>
-                    <SvgUri style={styles.topContainer.coins.icon} uri="https://sonaligl.sirv.com/Images/coinSimbol.svg" />
-                </View>
-            </View>
-            <Swiper>
-            <View style={styles.card}>
-                    <View style={styles.card.score}>
-                        <Text style={styles.card.score.text}>Pontuação: 156</Text>
+            { loggedUser &&
+                <SafeAreaView style={styles.container}>
+                    <ImageBackground resizeMode="cover" style={styles.background} source={{ uri: 'https://sonaligl.sirv.com/Images/BackgroundOnb.png' }} />
+                    <View style={styles.topContainer}>
+                        <View style={styles.topContainer.back}>
+                            {/* <SvgUri uri="https://sonaligl.sirv.com/Images/backArrow.svg" /> */}
+                            <Icon name="chevron-back" size={30} color="#fff" style={styles.icon}></Icon>
+                        </View>
+                        <View style={styles.topContainer.coins}>
+                            <Text style={styles.topContainer.coins.text}>{loggedUser.coins}</Text>
+                            <SvgUri style={styles.topContainer.coins.icon} uri="https://sonaligl.sirv.com/Images/coinSimbol.svg" />
+                        </View>
                     </View>
-                    <SvgUri  style={styles.card.image} uri="https://sonaligl.sirv.com/Images/rocket.svg" />
-                    <Text style={styles.card.title}>Rocket Pig</Text>
-                    <Text style={styles.card.text}>No rocket Pig tens de ultrapassar os obstáculos que vão aparecendo. Quantos mais obstáculos conseguires ultrapassar, mais moedas ganhas!</Text>
-                    <Pressable style={styles.card.button}>
-                        <Text style={styles.card.button.text}>Jogar</Text>
-                    </Pressable>
-                </View>
-                <View style={styles.card}>
-                    <View style={styles.card.score}>
-                        <Text style={styles.card.score.text}>Pontuação: 4</Text>
-                    </View>
-                    <SvgUri  style={styles.card.image} uri="https://sonaligl.sirv.com/Images/pigzz.svg" />
-                    <Text style={styles.card.title}>Pigzz</Text>
-                    <Text style={styles.card.text}>Um quizz para demonstrares o teu conhecimento. Quantas mais perguntas acertares, mais moedas ganhas!</Text>
-                    <Pressable style={styles.card.button}>
-                        <Text style={styles.card.button.text}>Jogar</Text>
-                    </Pressable>
-                </View>
-            </Swiper>
+                    <Swiper>
+                    <View style={styles.card}>
+                            <View style={styles.card.score}>
+                                <Text style={styles.card.score.text}>Pontuação: {loggedUser.stats.highScores.rocketpig}</Text>
+                            </View>
+                            <SvgUri  style={styles.card.image} uri="https://sonaligl.sirv.com/Images/rocket.svg" />
+                            <Text style={styles.card.title}>Rocket Pig</Text>
+                            <Text style={styles.card.text}>No rocket Pig tens de ultrapassar os obstáculos que vão aparecendo. Quantos mais obstáculos conseguires ultrapassar, mais moedas ganhas!</Text>
+                            <Pressable style={styles.card.button}>
+                                <Text style={styles.card.button.text}>Jogar</Text>
+                            </Pressable>
+                        </View>
+                        <View style={styles.card}>
+                            <View style={styles.card.score}>
+                                <Text style={styles.card.score.text}>Pontuação: {loggedUser.stats.highScores.pigzz}</Text>
+                            </View>
+                            <SvgUri  style={styles.card.image} uri="https://sonaligl.sirv.com/Images/pigzz.svg" />
+                            <Text style={styles.card.title}>Pigzz</Text>
+                            <Text style={styles.card.text}>Vários quizzes para demonstrares o teu conhecimento. Quantas mais perguntas acertares, mais moedas ganhas!</Text>
+                            <Pressable onPress={() => navigation.navigate('Quizz')} style={styles.card.button}>
+                                <Text style={styles.card.button.text}>Jogar</Text>
+                            </Pressable>
+                        </View>
+                    </Swiper>
+                </SafeAreaView>
+            }
         </SafeAreaView>
     );
 };

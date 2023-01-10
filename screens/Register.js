@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ImageBackground, Text, ScrollView, View, StyleSheet, Image, Pressable, Button, TouchableNativeFeedback, TextInput } from 'react-native';
 import { SvgUri } from 'react-native-svg';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import axios from 'axios';
 
 
 
@@ -9,6 +10,21 @@ const Register = ({ navigation }) => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+
+    async function handleSubmit() {
+        try {
+          const response = await axios.post('https://koink-api.onrender.com/users',{
+            username: username,
+            email:email,
+            password: password
+          });
+          //console.log(response);
+          if(response.status == 201)
+            navigation.navigate('Login');
+        } catch (error) {
+          console.error(error);
+        }
+    }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -37,12 +53,13 @@ const Register = ({ navigation }) => {
                     style={styles.inputs.pass}
                     onChangeText={setPassword}
                     value={password}
+                    secureTextEntry={true}
                     placeholder='Password'
                     placeholderTextColor="black"
             />
             </View>
             <View style={styles.account}>   
-                <Pressable  onPress={() => navigation.navigate('Login')} style={styles.account.buttonRegistar}>
+                <Pressable  onPress={() => handleSubmit()} style={styles.account.buttonRegistar}>
                     <Text style={styles.account.buttonRegistar.text}>Registar</Text>
                 </Pressable>
                 <Text style={styles.account.text}>Já tens uma conta?</Text>
@@ -75,6 +92,7 @@ const styles = StyleSheet.create({
     inputs:{
         alignItems:'center',
         name:{
+            color:'black',
             width:284,
             height:52,
             alignSelf:'center',
@@ -82,6 +100,7 @@ const styles = StyleSheet.create({
             borderRadius:10
         },
         email:{
+            color:'black',
             marginTop:10,
             width:284,
             height:52,
@@ -90,6 +109,7 @@ const styles = StyleSheet.create({
             borderRadius:10
         },
         pass:{
+            color:'black',
             marginTop:10,
             width:284,
             height:52,

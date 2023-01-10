@@ -14,6 +14,7 @@ import Onboarding3 from './screens/Onboarding3';
 import Minijogos from './screens/Minijogos';
 import Perfil from './screens/Perfil';
 import Store from './screens/Store';
+import SelectQuizz from './screens/SelectQuizz';
 import Quizz from './screens/Quizz';
 
 const Stack = createNativeStackNavigator();
@@ -27,7 +28,7 @@ const App = () => {
         <Stack.Navigator
         screenOptions={{headerShown: false}}
         >
-          {/* <Stack.Screen name='Home' component={Home} />
+          <Stack.Screen name='Home' component={Home} />
           <Stack.Screen name='Login' component={Login} />
           <Stack.Screen name='Register' component={Register} />
           <Stack.Screen name='Main' component={Main} />
@@ -37,7 +38,8 @@ const App = () => {
           <Stack.Screen name='Missoes' component={Missoes} />
           <Stack.Screen name='Minijogos' component={Minijogos} />
           <Stack.Screen name='Perfil' component={Perfil} />
-          <Stack.Screen name='Store' component={Store} /> */}
+          <Stack.Screen name='Store' component={Store} />
+          <Stack.Screen name='SelectQuizz' component={SelectQuizz} />
           <Stack.Screen name='Quizz' component={Quizz} />
         </Stack.Navigator>
       </NavigationContainer>

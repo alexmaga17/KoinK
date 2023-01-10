@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ImageBackground, Text, ScrollView, View, StyleSheet, Image, Pressable, Button, TouchableNativeFeedback, TextInput } from 'react-native';
+import { Alert, ImageBackground, Text, ScrollView, View, StyleSheet, Image, Pressable, Button, TouchableNativeFeedback, TextInput } from 'react-native';
 import { SvgUri } from 'react-native-svg';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -9,23 +9,22 @@ const Login = ({ navigation }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleSubmit = () => {
-        axios.post('http://10.0.2.2:3000/users/login', {
-            username,
-            password
-          })
-          .then(response => {
-            if (response.data.accessToken) {
-                AsyncStorage.setItem('@token', response.data.accessToken)// Store the token in AsyncStorage or in a global state management library
-                console.log('success')
-            } else {
-              console.log('Error');
-            }
-          })
-          .catch(error => {
-            console.error(error);
-          });
-      };
+    async function handleSubmit() {
+        const response = await axios.post('https://koink-api.onrender.com/users/login',{
+            username: username,
+            password: password
+        });
+          //console.log(response);
+        if(response.status == 200){
+            await AsyncStorage.setItem('token', response.data.accessToken);
+            await AsyncStorage.setItem('loggedUser', JSON.stringify(response.data.user));
+            const loggedUser = await AsyncStorage.getItem('loggedUser');
+            console.log(loggedUser);
+            navigation.navigate('Main');
+        }else{
+            Alert.alert('erro')
+        }
+    }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -47,12 +46,13 @@ const Login = ({ navigation }) => {
                     style={styles.inputs.pass}
                     onChangeText={setPassword}
                     value={password}
+                    secureTextEntry={true}
                     placeholder='Password'
                     placeholderTextColor="black"
             />
             </View>
             <View style={styles.account}>   
-                <Pressable  onPress={() => navigation.navigate('Onboarding1')} style={styles.account.buttonEntrar}>
+                <Pressable  onPress={() => handleSubmit()} style={styles.account.buttonEntrar}>
                     <Text style={styles.account.buttonEntrar.text}>Entrar</Text>
                 </Pressable>
                 <Pressable onPress={() => navigation.navigate('Register')} style={styles.account.buttonRegistar}>
@@ -84,6 +84,7 @@ const styles = StyleSheet.create({
     inputs:{
         alignItems:'center',
         name:{
+            color:'black',
             width:284,
             height:52,
             alignSelf:'center',
@@ -91,6 +92,7 @@ const styles = StyleSheet.create({
             borderRadius:10
         },
         pass:{
+            color:'black',
             marginTop:10,
             width:284,
             height:52,
