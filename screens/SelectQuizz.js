@@ -22,10 +22,34 @@ export default function SelectQuizz({ navigation }) {
             ></LinearGradient>
 
             <View style={styles.navbar}>
-                <Text style={styles.pontuacaoTxt}>Pontuação: 3</Text>
+                <Icon name="chevron-back" size={30} color="#fff" style={styles.icon} onPress={() => navigation.navigate('Minijogos')}></Icon>
             </View>
-            <View>
-                
+            <View style={styles.nuvemContainer}>
+                <SvgUri width='170' height='170' uri="https://rapedolo.sirv.com/koink/nuvem.svg" />
+                <SvgUri style={styles.koinkDinheiro} width='80' height='80' uri="https://rapedolo.sirv.com/koink/koinkDinheiro.svg" />
+
+            </View>
+            <View style={styles.imageQuizzes}>
+                <SvgUri style={{ marginLeft: 30 }} width='250' height='250' uri="https://rapedolo.sirv.com/koink/koinkPensativo.svg" />
+                <View style={[styles.containerPergunta, { transform: [{ rotate: '2deg' }] }]}></View>
+                <View style={[styles.containerPergunta, { transform: [{ rotate: '-2deg' }] }]}></View>
+                <View style={styles.containerPergunta}>
+                    <Text style={styles.perguntaTxt}>Vamos testar os teus conhecimentos sobre literacia financeira?</Text>
+                </View>
+            </View>
+            <View style={styles.containerButtons}>
+                <Pressable style={styles.button}>
+                    <Text style={styles.buttonTxt}>Quizz Fácil</Text>
+                </Pressable>
+                <Pressable style={styles.button}>
+                    <Text style={styles.buttonTxt}>Quizz Médio</Text>
+                </Pressable>
+                <Pressable style={styles.button}>
+                    <Text style={styles.buttonTxt}>Quizz Difícl</Text>
+                </Pressable>
+                <Pressable style={styles.button}>
+                    <Text style={styles.buttonTxt}>Quizz Expert</Text>
+                </Pressable>
             </View>
         </SafeAreaView>
     )
@@ -34,7 +58,6 @@ export default function SelectQuizz({ navigation }) {
 const styles = StyleSheet.create({
 
     container: {
-        flex:1,
         width: '100%',
         height: '100%',
     },
@@ -52,10 +75,56 @@ const styles = StyleSheet.create({
         marginTop: 40,
         alignItems: 'center'
     },
-    pontuacaoTxt: {
-        color: '#f6f4f2',
-        fontSize: 22,
-        fontWeight: 'bold'
 
+    nuvemContainer: {
+        alignSelf: 'flex-end',
+    },
+    koinkDinheiro: {
+        position: 'absolute',
+        top: 20,
+        left: 40
+    },
+    imageQuizzes: {
+        alignItems: 'center',
+    },
+
+    containerPergunta: {
+        position: 'absolute',
+        marginTop: 140,
+        width: '80%',
+        height: 150,
+        backgroundColor: '#F6F4F2',
+        borderRadius: 10,
+        borderStyle: 'solid',
+        borderColor: "#BEBEBE",
+        borderWidth: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: 5
+    },
+    perguntaTxt: {
+        color: '#353535',
+        fontSize: 18,
+        textAlign: 'center',
+    },
+
+    containerButtons: {
+        width: '100%',
+        alignItems: 'center',
+        marginTop:70,
+    },
+
+    button: {
+        backgroundColor: '#f6f4f2',
+        width: '80%',
+        marginVertical:7,
+        height:40,
+        borderRadius:10,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    buttonTxt:{
+        color: '#353535',
+        fontSize: 18,
     }
 })

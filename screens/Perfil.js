@@ -11,7 +11,8 @@ import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
 import Swiper from 'react-native-swiper';
 import { BlurView } from 'expo-blur';
 import { color } from '@rneui/base';
-// import AppIntroSlider from 'react-native-app-intro-slider';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+
 const ListTab = [
     {
         status: 'Inventário'
@@ -74,10 +75,7 @@ const Perfil = ({ navigation }) => {
 
     const setStatusFilter = status => {
         setStatus(status)
-    }
-
-    const setSliderFilter = slider => {
-        setSlider(slider)
+        setSliderId(0)
     }
 
     function swipeIndex(id) {
@@ -86,7 +84,7 @@ const Perfil = ({ navigation }) => {
     return (
         <View style={styles.container}>
             {loggedUser &&
-                <SafeAreaView style={styles.container}>
+                <KeyboardAwareScrollView style={styles.container}>
                     <LinearGradient
                         colors={['#0500FF', '#007FC6', '#550088', '#17011F']}
                         style={styles.linearGradient}
@@ -201,7 +199,7 @@ const Perfil = ({ navigation }) => {
                                                     <SvgUri width='80' height='80' uri="https://rapedolo.sirv.com/koink/KoinkIntelectual.svg" />
                                                 </View>
                                             </View>
-                                            <View style={styles.avatares}>
+                                            <View style={styles.boosters}>
 
                                                 <View style={styles.avataresImage}>
                                                     <SvgUri width='80' height='80' uri="https://rapedolo.sirv.com/koink/KoinkIntelectual.svg" />
@@ -225,7 +223,7 @@ const Perfil = ({ navigation }) => {
                         <View>
                             {status == 'Dados' &&
                                 <View style={styles.containerInv}>
-                                    <View style={styles.dadosInput}>
+                                    <View>
                                         <View style={[styles.inputTxt, styles.inputTxt1]}>
                                             <TextInput style={[{ flex: 1 }]}>{loggedUser.username}</TextInput>
                                             <IconMaterial style={[styles.imageStyle]} name="pencil-outline" size={20} color="#000"></IconMaterial>
@@ -280,7 +278,7 @@ const Perfil = ({ navigation }) => {
                         </BlurView>
                     </Modal>
 
-                </SafeAreaView>
+                </KeyboardAwareScrollView>
             }
         </View>
     );
@@ -405,7 +403,7 @@ const styles = StyleSheet.create({
     },
     containerInv: {
         width: '100%',
-        height: '67%',
+        // height: '67%',
         backgroundColor: '#F6F4F2',
 
     },
@@ -464,7 +462,8 @@ const styles = StyleSheet.create({
 
     boosters: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'space-around',
+        marginVertical: 10
     },
 
     // parte dos dados

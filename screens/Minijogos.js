@@ -33,7 +33,7 @@ const Onboarding1 = ({ navigation }) => {
                     <View style={styles.topContainer}>
                         <View style={styles.topContainer.back}>
                             {/* <SvgUri uri="https://sonaligl.sirv.com/Images/backArrow.svg" /> */}
-                            <Icon name="chevron-back" size={30} color="#fff" style={styles.icon}></Icon>
+                            <Icon name="chevron-back" size={30} color="#fff" style={styles.icon} onPress={() => navigation.navigate('Main')}></Icon>
                         </View>
                         <View style={styles.topContainer.coins}>
                             <Text style={styles.topContainer.coins.text}>{loggedUser.coins}</Text>
@@ -59,7 +59,7 @@ const Onboarding1 = ({ navigation }) => {
                             <SvgUri  style={styles.card.image} uri="https://sonaligl.sirv.com/Images/pigzz.svg" />
                             <Text style={styles.card.title}>Pigzz</Text>
                             <Text style={styles.card.text}>Vários quizzes para demonstrares o teu conhecimento. Quantas mais perguntas acertares, mais moedas ganhas!</Text>
-                            <Pressable onPress={() => navigation.navigate('Quizz')} style={styles.card.button}>
+                            <Pressable onPress={() => navigation.navigate('SelectQuizz')} style={styles.card.button}>
                                 <Text style={styles.card.button.text}>Jogar</Text>
                             </Pressable>
                         </View>

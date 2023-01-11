@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ImageBackground, Text, ScrollView, View, StyleSheet, Image, Pressable, Button, TouchableNativeFeedback, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SvgUri } from 'react-native-svg';
-
+import Icon from 'react-native-vector-icons/Ionicons';
 
 
 const Onboarding1 = ({ navigation }) => {
@@ -10,7 +10,7 @@ const Onboarding1 = ({ navigation }) => {
         <SafeAreaView style={styles.container}>
             <ImageBackground resizeMode="cover" style={styles.background} source={{ uri: 'https://sonaligl.sirv.com/Images/BackgroundOnb.png' }} />
             <View style={styles.topContainer}>
-                <SvgUri uri="https://sonaligl.sirv.com/Images/backArrow.svg" />
+            <Icon name="chevron-back" size={30} color="#fff" style={styles.icon} onPress={() => navigation.navigate('Main')}></Icon>
                 <View style={styles.topContainer.coinsBox}>
                     <Text style={styles.topContainer.coinsBox.text}>14.000</Text>
                     <SvgUri uri="https://sonaligl.sirv.com/Images/coinSimbol.svg" />

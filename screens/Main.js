@@ -29,6 +29,7 @@ const Main = ({ navigation }) => {
                 { loggedUser &&
                 <SafeAreaView style={styles.container}>
                         <SvgUri style={styles.background} uri="https://sonaligl.sirv.com/Images/Group%2045.svg" />
+                        {/* meter em png a image */}
                         <View style={styles.levelBar}>
                             <View style={styles.levelBar.level}>
                                 <Text style={styles.levelBar.level.text}>{loggedUser.level.number}</Text>
