@@ -54,6 +54,16 @@ export default function Store({navigation}) {
         setModalVisible(true);
     }
 
+     async function buyAvatar(idAvatar) {
+        const response = await axios.put(`https://koink-api.onrender.com/users/${loggedUser._id}/avatars/${idAvatar}`,				{
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + AsyncStorage.getItem('token'),
+            }
+        });
+        console.log(response);
+    }
+
     useEffect(() => {
         getLoggedUser();
         getAvatars();
@@ -250,7 +260,7 @@ export default function Store({navigation}) {
                                     <Text style={styles.avatarCompraPrecoTxt}>{activeAvatar.price}</Text>
                                     <SvgUri style={{ marginRight: 10 }} width='21' height='21' uri="https://rapedolo.sirv.com/koink/coin.svg" />
                                 </View>
-                                <Pressable style={styles.botaoCompraFinal}>
+                                <Pressable style={styles.botaoCompraFinal} onPress={() => buyAvatar(activeAvatar._id)}>
                                     <Text style={styles.botaoCompraFinalTxt}>Comprar</Text>
                                 </Pressable>
                                 <Pressable style={styles.botaoCancelar} onPress={() => setModalVisible(false)}>
