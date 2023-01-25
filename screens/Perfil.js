@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { ImageBackground, Text, ScrollView, Modal, Switch, View, StyleSheet, Image, Pressable, Button, TouchableNativeFeedback, TextInput, Dimensions } from 'react-native';
 import { SvgUri } from 'react-native-svg';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -12,7 +12,8 @@ import Swiper from 'react-native-swiper';
 import { BlurView } from 'expo-blur';
 import { color } from '@rneui/base';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-
+import {LoggedUserContext} from '../src/LoggedUserContext';
+let bcrypt = require('bcryptjs');
 const ListTab = [
     {
         status: 'Inventário'
@@ -35,40 +36,107 @@ const InventarioTab = [
 
 
 
-const Perfil = ({ navigation }) => {
+const Perfil = ({ navigation, route }) => {
     const [status, setStatus] = useState('Inventário')
     const [slider, setSlider] = useState('Avatares')
     const [sliderId, setSliderId] = useState(0)
     const [modalVisible, setModalVisible] = useState(false);
-    const [loggedUser, setloggedUser] = useState(null);
-
-    async function getLoggedUser(){
-        const data = await AsyncStorage.getItem('loggedUser');
-        if(data !== null){
-            setloggedUser(JSON.parse(data));
-            console.log(loggedUser);
-        }
+    const [modalAvatarActive, setModalAvatarActive] = useState(false);
+    const [modalLogout, setModalLogout] = useState(false);
+    const [modalLogoutDone, setModalLogoutDone] = useState(false);
+    const [modalEditData, setModalEditData] = useState(false);
+    const [modalEditDataComplete, setModalEditDataComplete] = useState(false);
+    const [activeAvatar, setActiveAvatar] = useState(false);
+    const {loggedUser, setLoggedUser} = useContext(LoggedUserContext);
+    const [username, setUsername] = useState(null);
+    const [email, setEmail] = useState(null);
+    const [password, setPassword] = useState(null);
+    
+    
+    async function getLoggedUser() {
+        setUsername(loggedUser.username)
+        setEmail(loggedUser.email)
+        setPassword(loggedUser.password)    // console.log(loggedUser);
     }
+
+
+    async function changeUserData() {
+        // setDadosAtualizados({username:loggedUser.username, email:loggedUser.email});
+        let token = await AsyncStorage.getItem('token');
+
+
+        await axios.put(`https://koink-api.onrender.com/users/${loggedUser._id}`, {
+            username: username,
+            email: email,
+        }, {
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + token
+            }
+        })
+        try {
+            setLoggedUser((prevState) => {
+                return {
+                    ...prevState,
+                    username: username,
+                    email: email,
+                }
+            })
+            setModalEditData(false);
+            setModalEditDataComplete(true);
+        } catch (error) {
+            console.error(error);
+        }
+
+    }
+
     useEffect(() => {
         getLoggedUser();
     }, []);
 
     useEffect(() => {
-        console.log(loggedUser);
     }, [loggedUser]);
 
 
     async function handleLogout() {
         try {
             await AsyncStorage.removeItem('token');
-            await AsyncStorage.removeItem('loggedUser');
-            navigation.navigate('Home');
+            //await AsyncStorage.removeItem('loggedUser');
+            setModalLogout(false);
+            setModalLogoutDone(true);
+
+            // navigation.navigate('Home');
         } catch (error) {
-          console.error(error);
+            console.error(error);
         }
     }
 
+    async function renderModal(id) {
+        const avatar = await axios.get(`https://koink-api.onrender.com/avatars/${id}`);
 
+        setActiveAvatar(avatar.data[0]);
+
+        setModalAvatarActive(true);
+    }
+
+    async function setAvatar(image) {
+        let token = await AsyncStorage.getItem('token');
+        await axios.put(`https://koink-api.onrender.com/users/${loggedUser._id}`, {
+            curr_avatar: image
+        }, {
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + token
+            }
+        });
+        setLoggedUser((prevState) => {
+            return {
+                ...prevState,
+                curr_avatar: image
+            }
+        })
+        setModalAvatarActive(false);
+    }
 
     const [isEnabled, setIsEnabled] = useState(false);
     const toggleSwitch = () => setIsEnabled(previousState => !previousState);
@@ -98,7 +166,7 @@ const Perfil = ({ navigation }) => {
                         <View style={styles.opacityContainer}>
                         </View>
                         <View style={styles.perfilImage}>
-                            <SvgUri width='90' height='90' uri="https://rapedolo.sirv.com/koink/KoinkIntelectual.svg" />
+                            <SvgUri width='90' height='90' uri={loggedUser.curr_avatar} />
                         </View>
                         <View style={styles.nomeContainer}>
                             <Text style={styles.nome}>@{loggedUser.username}</Text>
@@ -118,7 +186,7 @@ const Perfil = ({ navigation }) => {
                                 <Text style={styles.nivel}>Moedas</Text>
                                 <Text style={styles.numero}>{loggedUser.coins}</Text>
                             </View>
-                            
+
                         </View>
                         <View style={styles.tabs}>
                             {ListTab.map((tab, index) => (
@@ -128,7 +196,7 @@ const Perfil = ({ navigation }) => {
                             ))}
                         </View>
                         <View>
-                            {status == 'Inventário' &&
+                            {status == 'Inventário' && loggedUser &&
                                 <View style={styles.containerInv}>
                                     <View style={[styles.sliderName]}>
                                         {InventarioTab.map((inv, index) => (
@@ -149,6 +217,18 @@ const Perfil = ({ navigation }) => {
                                     >
                                         <ScrollView style={styles.containerAvatares}>
                                             <View style={styles.avatares}>
+                                                {
+                                                    loggedUser.inventory.avatars.map((avatar) => {
+                                                        return (
+                                                            // <Pressable key ={avatar._id} style={styles.avataresImage} onPress={()=> setAvatar(avatar.image)}>
+                                                            <Pressable key={avatar._id} style={styles.avataresImage} onPress={() => renderModal(avatar._id)}>
+                                                                <SvgUri width='80' height='80' uri={avatar.image} />
+                                                            </Pressable>
+                                                        )
+                                                    })
+                                                }
+                                            </View>
+                                            {/* <View style={styles.avatares}>
 
                                                 <View style={styles.avataresImage}>
                                                     <SvgUri width='80' height='80' uri="https://rapedolo.sirv.com/koink/KoinkIntelectual.svg" />
@@ -183,9 +263,23 @@ const Perfil = ({ navigation }) => {
                                                 <View style={styles.avataresImage}>
                                                     <SvgUri width='80' height='80' uri="https://rapedolo.sirv.com/koink/KoinkIntelectual.svg" />
                                                 </View>
-                                            </View>
+                                            </View> */}
                                         </ScrollView>
-
+                                        <ScrollView style={styles.containerAvatares}>
+                                            <View style={styles.avatares}>
+                                                {
+                                                    loggedUser.inventory.boosters.map((booster) => {
+                                                        return (
+                                                            // <Pressable key ={avatar._id} style={styles.avataresImage} onPress={()=> setAvatar(avatar.image)}>
+                                                            <Pressable key={booster._id} style={styles.avataresImage}>
+                                                                <SvgUri width='80' height='80' uri={booster.image} />
+                                                            </Pressable>
+                                                        )
+                                                    })
+                                                }
+                                            </View>
+                                        </ScrollView>    
+{/* 
                                         <ScrollView style={styles.containerBoosters}>
                                             <View style={styles.boosters}>
 
@@ -211,7 +305,7 @@ const Perfil = ({ navigation }) => {
                                                     <SvgUri width='80' height='80' uri="https://rapedolo.sirv.com/koink/KoinkIntelectual.svg" />
                                                 </View>
                                             </View>
-                                        </ScrollView>
+                                        </ScrollView> */}
                                     </Swiper>
 
 
@@ -225,19 +319,21 @@ const Perfil = ({ navigation }) => {
                                 <View style={styles.containerInv}>
                                     <View>
                                         <View style={[styles.inputTxt, styles.inputTxt1]}>
-                                            <TextInput style={[{ flex: 1 }]}>{loggedUser.username}</TextInput>
+                                            <TextInput
+                                                onChangeText={setUsername} value={username} style={[{ flex: 1, color: '#000' }]}/>
                                             <IconMaterial style={[styles.imageStyle]} name="pencil-outline" size={20} color="#000"></IconMaterial>
                                         </View>
                                         <View style={styles.inputTxt}>
-                                            <TextInput style={[{ flex: 1 }]}>{loggedUser.email}</TextInput>
+                                            <TextInput onChangeText={setEmail} value={email} style={[{ flex: 1, color: '#000' }]}/>
                                             <IconMaterial style={[styles.imageStyle]} name="pencil-outline" size={20} color="#000"></IconMaterial>
                                         </View>
                                         <View style={styles.inputTxt}>
-                                            <TextInput style={[{ flex: 1 }]}>*********</TextInput>
+                                            <TextInput secureTextEntry={true} onChangeText={setPassword} value={password} style={[{ flex: 1, color: '#000' }]}></TextInput>
                                             <IconMaterial style={[styles.imageStyle]} name="pencil-outline" size={20} color="#000"></IconMaterial>
                                         </View>
                                     </View>
-                                    <Pressable style={styles.editarButton}>
+                                    {/* <Pressable style={styles.editarButton} onPress={() => changeUserData()}> */}
+                                    <Pressable style={styles.editarButton} onPress={() => setModalEditData(true)}>
                                         <Text style={styles.editarTxt}>Editar</Text>
                                     </Pressable>
                                 </View>
@@ -264,11 +360,12 @@ const Perfil = ({ navigation }) => {
                                         thumbColor={isEnabled ? "#FFFFFF" : "#FFFFFF"}
                                         onValueChange={toggleSwitch}
                                         value={isEnabled}
-                                        style={{ transform: [{ scaleX: 1.8 }, { scaleY: 1.8 }], paddingHorizontal:9}}
+                                        style={{ transform: [{ scaleX: 1.8 }, { scaleY: 1.8 }], paddingHorizontal: 9 }}
                                     />
                                 </View>
-                                <Pressable style={styles.botaoLogout} onPress={() => handleLogout()}>
-                                    <Text style={[styles.botaoCancelarTxt, {color:'#ffffff'}]}>Logout</Text>
+                                {/* <Pressable style={styles.botaoLogout} onPress={() => handleLogout()}> */}
+                                <Pressable style={styles.botaoLogout} onPress={() => setModalLogout(true)}>
+                                    <Text style={[styles.botaoCancelarTxt, { color: '#ffffff' }]}>Logout</Text>
                                 </Pressable>
                                 <Pressable style={styles.botaoCancelar} onPress={() => setModalVisible(false)}>
                                     <Text style={styles.botaoCancelarTxt}>Voltar</Text>
@@ -277,6 +374,154 @@ const Perfil = ({ navigation }) => {
                             </View>
                         </BlurView>
                     </Modal>
+
+                    {/* Modal de escolher o Avatar de Perfil */}
+                    <Modal
+                        animationType="slide"
+                        visible={modalAvatarActive}
+                        transparent={true}
+                        onRequestClose={() => {
+                            Alert.alert("Modal has been closed.");
+                            setModalAvatarActive(!modalAvatarActive);
+                        }}
+                    >
+                        <BlurView intensity={100} tint='dark' style={styles.containerModal}>
+                            <View style={styles.modal}>
+                                <View>
+                                    <SvgUri width='120' height='120' uri={activeAvatar.image} />
+                                </View>
+                                <Text style={styles.modalAvatarTxt}>Pretende equipar este avatar?</Text>
+                                <TouchableNativeFeedback onPress={() => setAvatar(activeAvatar.image)}>
+                                    <View style={[styles.buttonAvatarModal]}>
+                                        <Text style={[styles.buttonAvatarModalTxt, { color: '#FFFFFF' }]}>Sim</Text>
+                                    </View>
+                                </TouchableNativeFeedback>
+                                <TouchableNativeFeedback onPress={() => setModalAvatarActive(false)}>
+                                    <View style={[styles.buttonAvatarModal, { backgroundColor: '#E3E3E3' }]}>
+                                        <Text style={[styles.buttonAvatarModalTxt]}>Não</Text>
+                                    </View>
+                                </TouchableNativeFeedback>
+                            </View>
+                        </BlurView>
+                    </Modal>
+
+
+                    {/* Modal de logout */}
+                    <Modal
+                        animationType="slide"
+                        visible={modalLogout}
+                        transparent={true}
+                        onRequestClose={() => {
+                            Alert.alert("Modal has been closed.");
+                            setModalLogout(!modalLogout);
+                        }}
+                    >
+                        <BlurView intensity={100} tint='dark' style={styles.containerModal}>
+                            <View style={[styles.modal, { height: '50%', }]}>
+                                <View style={{ marginVertical: 20 }}>
+                                    <SvgUri width='150' height='150' uri='https://rapedolo.sirv.com/koink/koinkSurpreendido.svg' />
+                                </View>
+                                <Text style={styles.modalAvatarTxt}>Tens a certeza que queres sair do Koink?</Text>
+                                <TouchableNativeFeedback onPress={() => handleLogout()}>
+                                    <View style={[styles.buttonAvatarModal]}>
+                                        <Text style={[styles.buttonAvatarModalTxt, { color: '#FFFFFF' }]}>Sim</Text>
+                                    </View>
+                                </TouchableNativeFeedback>
+                                <TouchableNativeFeedback onPress={() => setModalLogout(false)}>
+                                    <View style={[styles.buttonAvatarModal, { backgroundColor: '#E3E3E3' }]}>
+                                        <Text style={[styles.buttonAvatarModalTxt]}>Não</Text>
+                                    </View>
+                                </TouchableNativeFeedback>
+                            </View>
+                        </BlurView>
+                    </Modal>
+
+
+
+                    {/* Modal de aviso após Logout */}
+
+                    <Modal
+                        animationType="slide"
+                        visible={modalLogoutDone}
+                        transparent={true}
+                        onRequestClose={() => {
+                            Alert.alert("Modal has been closed.");
+                            setModalLogoutDone(!modalLogoutDone);
+                        }}
+                    >
+                        <BlurView intensity={100} tint='dark' style={styles.containerModal}>
+                            <View style={[styles.modal]}>
+                                <View style={{ marginVertical: 20 }}>
+                                    <SvgUri width='150' height='150' uri='https://rapedolo.sirv.com/koink/koinkTriste.svg' />
+                                </View>
+                                <Text style={styles.modalAvatarTxt}>A tua sessão foi terminada com sucesso!</Text>
+                                <TouchableNativeFeedback onPress={() => navigation.navigate('Home')}>
+                                    <View style={[styles.buttonAvatarModal]}>
+                                        <Text style={[styles.buttonAvatarModalTxt, { color: '#FFFFFF' }]}>Ok</Text>
+                                    </View>
+                                </TouchableNativeFeedback>
+                            </View>
+                        </BlurView>
+                    </Modal>
+
+
+
+                    {/* Modal de confirmar edição dos dados */}
+                    <Modal
+                        animationType="slide"
+                        visible={modalEditData}
+                        transparent={true}
+                        onRequestClose={() => {
+                            Alert.alert("Modal has been closed.");
+                            setModalEditData(!modalEditData);
+                        }}
+                    >
+                        <BlurView intensity={100} tint='dark' style={styles.containerModal}>
+                            <View style={[styles.modal, { height: '50%', }]}>
+                                <View style={{ marginVertical: 20 }}>
+                                    <SvgUri width='150' height='150' uri='https://rapedolo.sirv.com/koink/koinkEditar.svg' />
+                                </View>
+                                <Text style={styles.modalAvatarTxt}>Queres salvar as alterações feitas nos teus dados?</Text>
+                                <TouchableNativeFeedback onPress={() => changeUserData()}>
+                                    <View style={[styles.buttonAvatarModal]}>
+                                        <Text style={[styles.buttonAvatarModalTxt, { color: '#FFFFFF' }]}>Sim</Text>
+                                    </View>
+                                </TouchableNativeFeedback>
+                                <TouchableNativeFeedback onPress={() => setModalEditData(false)}>
+                                    <View style={[styles.buttonAvatarModal, { backgroundColor: '#E3E3E3' }]}>
+                                        <Text style={[styles.buttonAvatarModalTxt]}>Não</Text>
+                                    </View>
+                                </TouchableNativeFeedback>
+                            </View>
+                        </BlurView>
+                    </Modal>
+
+
+                    {/* Modal edição dos dados concluida */}
+                    <Modal
+                        animationType="slide"
+                        visible={modalEditDataComplete}
+                        transparent={true}
+                        onRequestClose={() => {
+                            Alert.alert("Modal has been closed.");
+                            setModalEditDataComplete(!modalEditDataComplete);
+                        }}
+                    >
+                        <BlurView intensity={100} tint='dark' style={styles.containerModal}>
+                            <View style={[styles.modal]}>
+                                <View style={{ marginVertical: 20 }}>
+                                    <SvgUri width='150' height='150' uri='https://rapedolo.sirv.com/koink/koinkVitoria.svg' />
+                                </View>
+                                <Text style={styles.modalAvatarTxt}>Os teus dados foram atualizados com sucesso!</Text>
+                                <TouchableNativeFeedback onPress={() => setModalEditDataComplete(false)}>
+                                    <View style={[styles.buttonAvatarModal]}>
+                                        <Text style={[styles.buttonAvatarModalTxt, { color: '#FFFFFF' }]}>Ok</Text>
+                                    </View>
+                                </TouchableNativeFeedback>
+                            </View>
+                        </BlurView>
+                    </Modal>
+
 
                 </KeyboardAwareScrollView>
             }
@@ -441,10 +686,13 @@ const styles = StyleSheet.create({
     },
     avatares: {
         flexDirection: 'row',
+        flexWrap: 'wrap',
         justifyContent: 'space-around',
-        marginVertical: 10
+        marginVertical: 5,
+        marginHorizontal: 15,
     },
     avataresImage: {
+        marginVertical: 5,
         backgroundColor: '#FFFFFF',
         width: 100,
         height: 100,
@@ -515,10 +763,11 @@ const styles = StyleSheet.create({
         blurRadius: 1
     },
     modal: {
+        paddingVertical: 10,
         backgroundColor: '#F6F4F2',
         borderRadius: 30,
         width: '80%',
-        height: '37%',
+        height: '40%',
         alignItems: 'center',
     },
 
@@ -526,24 +775,24 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
         color: '#353535',
-        marginTop:8
+        marginTop: 8
     },
 
-    som:{
+    som: {
         width: '100%',
-        flexDirection:'row',
-        justifyContent:'center',
-        alignItems:'center',
-        marginTop:40,
-        marginBottom:25
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 40,
+        marginBottom: 25
     },
 
-    somTxt:{
+    somTxt: {
         fontSize: 18,
-        fontWeight:'semibold',
-        color:'#353535'
+        fontWeight: 'semibold',
+        color: '#353535'
     },
-    botaoLogout:{
+    botaoLogout: {
         backgroundColor: '#FF6600',
         borderRadius: 10,
         alignItems: 'center',
@@ -565,8 +814,26 @@ const styles = StyleSheet.create({
         color: '#353535',
         fontSize: 18
     },
-    
 
+    modalAvatarTxt: {
+        marginHorizontal: 10,
+        fontSize: 18,
+        color: '#353535'
+    },
+
+    buttonAvatarModal: {
+        backgroundColor: '#FF6600',
+        borderRadius: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '60%',
+        paddingVertical: 12,
+        marginTop: 10
+    },
+    buttonAvatarModalTxt: {
+        color: '#353535',
+        fontSize: 18
+    },
 
 });
 

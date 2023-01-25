@@ -38,10 +38,10 @@ export default function SelectQuizz({ navigation }) {
                 </View>
             </View>
             <View style={styles.containerButtons}>
-                <Pressable style={styles.button}>
+                <Pressable style={styles.button} onPress={() => navigation.navigate('Quizz1')}>
                     <Text style={styles.buttonTxt}>Quizz Fácil</Text>
                 </Pressable>
-                <Pressable style={styles.button}>
+                <Pressable style={styles.button} onPress={() => navigation.navigate('Quizz2')}>
                     <Text style={styles.buttonTxt}>Quizz Médio</Text>
                 </Pressable>
                 <Pressable style={styles.button}>

@@ -1,28 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { ImageBackground, Text, ScrollView, View, StyleSheet, Image, Pressable, Button, TouchableNativeFeedback, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SvgUri } from 'react-native-svg';
 import Swiper from 'react-native-swiper';
 import Icon from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {LoggedUserContext} from '../src/LoggedUserContext';
 
 
 
 const Onboarding1 = ({ navigation }) => {
-
-    const [loggedUser, setloggedUser] = useState(null);
-
-    async function getLoggedUser(){
-        const data = await AsyncStorage.getItem('loggedUser');
-        if(data !== null){
-            setloggedUser(JSON.parse(data));
-            console.log(loggedUser);
-        }
-    }
+    const {loggedUser, setLoggedUser} = useContext(LoggedUserContext);
+    // async function getLoggedUser(){
+    //     const data = await AsyncStorage.getItem('loggedUser');
+    //     if(data !== null){
+    //         setloggedUser(JSON.parse(data));
+    //         console.log(loggedUser);
+    //     }
+    // }
 
     useEffect(() => {
-        getLoggedUser();
-    }, []);
+        // getLoggedUser();
+    }, [loggedUser]);
 
 
     return (
@@ -40,21 +39,21 @@ const Onboarding1 = ({ navigation }) => {
                             <SvgUri style={styles.topContainer.coins.icon} uri="https://sonaligl.sirv.com/Images/coinSimbol.svg" />
                         </View>
                     </View>
-                    <Swiper>
+                    <Swiper loop={false}>
                     <View style={styles.card}>
                             <View style={styles.card.score}>
-                                <Text style={styles.card.score.text}>Pontuação: {loggedUser.stats.highScores.rocketpig}</Text>
+                                <Text style={styles.card.score.text}>Pontuação: {loggedUser.stats.highscores.rocketpig}</Text>
                             </View>
                             <SvgUri  style={styles.card.image} uri="https://sonaligl.sirv.com/Images/rocket.svg" />
                             <Text style={styles.card.title}>Rocket Pig</Text>
                             <Text style={styles.card.text}>No rocket Pig tens de ultrapassar os obstáculos que vão aparecendo. Quantos mais obstáculos conseguires ultrapassar, mais moedas ganhas!</Text>
-                            <Pressable style={styles.card.button}>
+                            <Pressable onPress={() => navigation.navigate('RocketPig')} style={styles.card.button}>
                                 <Text style={styles.card.button.text}>Jogar</Text>
                             </Pressable>
                         </View>
                         <View style={styles.card}>
                             <View style={styles.card.score}>
-                                <Text style={styles.card.score.text}>Pontuação: {loggedUser.stats.highScores.pigzz}</Text>
+                                <Text style={styles.card.score.text}>Pontuação: {loggedUser.stats.highscores.pigzz}</Text>
                             </View>
                             <SvgUri  style={styles.card.image} uri="https://sonaligl.sirv.com/Images/pigzz.svg" />
                             <Text style={styles.card.title}>Pigzz</Text>
